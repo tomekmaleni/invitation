@@ -156,7 +156,6 @@
             color: var(--gold);
             line-height: 1;
             text-shadow: 0 2px 4px rgba(0,0,0,0.06);
-            z-index: 1;
         }
 
         /* SVG corner ornaments */
@@ -421,7 +420,7 @@
 
     <!-- Bow + pull handle -->
     <div class="bow-wrapper" id="bowWrapper">
-        <div class="bow-cross">&#10013;</div>
+        <div class="bow-cross"></div>
         <svg class="bow-svg" viewBox="0 0 200 110" fill="none">
             <!-- Left ribbon loop -->
             <path d="M100 55C92 20 30 10 35 55C30 95 92 88 100 55Z"
@@ -624,7 +623,7 @@
         if (img.naturalWidth && img.naturalHeight) {
             var ratio = img.naturalWidth / img.naturalHeight;
             wrapper.style.aspectRatio = '' + ratio;
-            wrapper.style.width = 'min(90vw, calc(90vh * ' + ratio + '))';
+            wrapper.style.width = 'min(50vw, calc(90vh * ' + ratio + '))';
         }
     });
 })();

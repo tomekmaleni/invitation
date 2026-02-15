@@ -229,7 +229,9 @@
         .bow-svg {
             width: clamp(90px, 16vmin, 170px);
             filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+            cursor: grab;
         }
+        .bow-svg:active { cursor: grabbing; }
 
         /* ===================== PULL HANDLE ===================== */
         .pull-handle {
@@ -605,18 +607,12 @@
     }
 
     /* --- EVENT LISTENERS --- */
-    pullHandle.addEventListener('mousedown', onStart);
-    pullHandle.addEventListener('touchstart', onStart, { passive: false });
+    bowWrapper.addEventListener('mousedown', onStart);
+    bowWrapper.addEventListener('touchstart', onStart, { passive: false });
     document.addEventListener('mousemove', onMove);
     document.addEventListener('touchmove', onMove, { passive: false });
     document.addEventListener('mouseup', onEnd);
     document.addEventListener('touchend', onEnd);
-
-    // clicking the bow itself also opens (fallback)
-    bowWrapper.addEventListener('click', function(e) {
-        if (isOpened || e.target.closest('.pull-handle')) return;
-        openDoors();
-    });
 
     // auto-adjust aspect ratio to match the actual image
     var img = document.getElementById('invImg');

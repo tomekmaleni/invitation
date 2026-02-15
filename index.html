@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Marija & Tomislav - Pozivnica</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #c9a84c;
+            --gold-dark: #a88530;
+            --gold-light: #d4b55a;
+            --cream: #faf7f0;
+            --cream-dark: #f0e8d8;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            width: 100%; height: 100%;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: radial-gradient(ellipse at center, #2a2520, #171310);
+            overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        /* ===================== WRAPPER ===================== */
+        .wrapper {
+            position: relative;
+            width: min(88vw, calc(88vh * 1.42));
+            aspect-ratio: 1.42;
+            max-width: 1050px;
+        }
+
+        /* ===================== INVITATION (behind doors) ===================== */
+        .invitation {
+            position: absolute;
+            inset: 0;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow:
+                0 0 80px rgba(201, 168, 76, 0.08),
+                0 25px 80px rgba(0, 0, 0, 0.6);
+            background: var(--cream);
+        }
+
+        .invitation img {
+            width: 100%; height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .invitation.revealed {
+            animation: inv-glow 3s ease-in-out 1s infinite alternate;
+        }
+
+        @keyframes inv-glow {
+            0%   { box-shadow: 0 0 60px rgba(201,168,76,0.08), 0 25px 80px rgba(0,0,0,0.6); }
+            100% { box-shadow: 0 0 90px rgba(201,168,76,0.22), 0 25px 80px rgba(0,0,0,0.6); }
+        }
+
+        /* ===================== DOORS ===================== */
+        .doors {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            z-index: 5;
+        }
+
+        .door {
+            width: 50%; height: 100%;
+            perspective: 2200px;
+        }
+
+        .door__inner {
+            width: 100%; height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 2.4s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+
+        .door--left .door__inner { transform-origin: left center; }
+        .door--right .door__inner { transform-origin: right center; }
+
+        .door__face {
+            position: absolute; inset: 0;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+
+        /* ---------- FRONT (cover) ---------- */
+        .door__front {
+            background:
+                linear-gradient(170deg, rgba(212,181,90,0.06) 0%, transparent 40%),
+                linear-gradient(to bottom, var(--cream), var(--cream-dark) 50%, var(--cream));
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .door--left .door__front {
+            border: 2px solid var(--gold);
+            border-right: 1.5px solid var(--gold);
+            border-radius: 4px 0 0 4px;
+        }
+
+        .door--right .door__front {
+            border: 2px solid var(--gold);
+            border-left: 1.5px solid var(--gold);
+            border-radius: 0 4px 4px 0;
+        }
+
+        /* inner vertical gold accent line */
+        .door__front::before {
+            content: '';
+            position: absolute;
+            top: 8%; bottom: 8%;
+            width: 1px;
+            background: linear-gradient(to bottom, transparent, var(--gold) 20%, var(--gold) 80%, transparent);
+            opacity: 0.45;
+        }
+        .door--left .door__front::before { right: 14%; }
+        .door--right .door__front::before { left: 14%; }
+
+        /* ---------- BACK ---------- */
+        .door__back {
+            transform: rotateY(180deg);
+            border: 1px solid var(--gold);
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+        .door--left .door__back {
+            border-radius: 0 4px 4px 0;
+            background-image: url(images/invitation-left-wing.jpg);
+        }
+        .door--right .door__back {
+            border-radius: 4px 0 0 4px;
+            background-image: url(images/invitation-right-wing.jpg);
+        }
+
+        /* ---------- Cover decorations ---------- */
+        .cover-letter {
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(40px, 8vmin, 80px);
+            color: var(--gold);
+            line-height: 1;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.06);
+            z-index: 1;
+        }
+
+        /* SVG corner ornaments */
+        .corner {
+            position: absolute;
+            width: clamp(45px, 9vmin, 90px);
+            height: clamp(45px, 9vmin, 90px);
+            opacity: 0.35;
+        }
+        .corner svg { width: 100%; height: 100%; }
+        .corner--tl { top: 6%; left: 8%; }
+        .corner--bl { bottom: 6%; left: 8%; transform: scaleY(-1); }
+        .corner--tr { top: 6%; right: 8%; transform: scaleX(-1); }
+        .corner--br { bottom: 6%; right: 8%; transform: scale(-1); }
+
+        /* floral accent on cover */
+        .floral-accent {
+            position: absolute;
+            opacity: 0.12;
+        }
+        .floral-accent svg { width: 100%; height: 100%; }
+        .floral-left {
+            bottom: 10%; right: 5%;
+            width: clamp(60px, 12vmin, 130px);
+            height: clamp(80px, 16vmin, 170px);
+        }
+        .floral-right {
+            top: 10%; left: 5%;
+            width: clamp(60px, 12vmin, 130px);
+            height: clamp(80px, 16vmin, 170px);
+            transform: scaleX(-1) rotate(180deg);
+        }
+
+        /* ===================== OPENED STATE ===================== */
+        .doors.opened .door--left .door__inner {
+            transform: rotateY(-155deg);
+            animation: none;
+        }
+        .doors.opened .door--right .door__inner {
+            transform: rotateY(155deg);
+            animation: none;
+        }
+
+        /* ===================== BOW WRAPPER ===================== */
+        .bow-wrapper {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .bow-wrapper.hidden {
+            opacity: 0;
+            transform: translate(-50%, 60%) scale(0.4) rotate(12deg);
+            pointer-events: none;
+        }
+
+        .bow-cross {
+            font-size: clamp(16px, 2.8vmin, 28px);
+            color: var(--gold);
+            opacity: 0.6;
+            margin-bottom: clamp(4px, 1vmin, 10px);
+            line-height: 1;
+        }
+
+        .bow-svg {
+            width: clamp(90px, 16vmin, 170px);
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+        }
+
+        /* ===================== PULL HANDLE ===================== */
+        .pull-handle {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: grab;
+            padding: 8px 30px;
+            margin-top: -2px;
+            z-index: 25;
+            animation: tassel-sway 3s ease-in-out infinite;
+        }
+        .pull-handle:active { cursor: grabbing; }
+
+        .pull-string {
+            width: 2.5px;
+            height: clamp(35px, 6vmin, 60px);
+            background: linear-gradient(to bottom, var(--gold), var(--gold-dark));
+            border-radius: 2px;
+            transition: height 0.15s ease;
+        }
+
+        .pull-tassel {
+            margin-top: 2px;
+            width: clamp(14px, 2.4vmin, 24px);
+            height: clamp(18px, 3.2vmin, 32px);
+            background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-dark));
+            clip-path: polygon(10% 0%, 90% 0%, 100% 20%, 65% 100%, 35% 100%, 0% 20%);
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+        }
+
+        @keyframes tassel-sway {
+            0%, 100% { transform: rotate(-1.5deg); }
+            50%      { transform: rotate(1.5deg); }
+        }
+
+        /* ===================== HINT ===================== */
+        .hint {
+            position: absolute;
+            bottom: max(-42px, -5.5vmin);
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Cormorant Garamond', serif;
+            font-style: italic;
+            font-size: clamp(11px, 1.8vmin, 17px);
+            color: var(--gold);
+            white-space: nowrap;
+            opacity: 0;
+            animation: hint-in 0.8s ease 1.2s forwards;
+            z-index: 30;
+        }
+        .hint.hidden { animation: none; opacity: 0; transition: opacity 0.4s; }
+
+        @keyframes hint-in { to { opacity: 1; } }
+
+        .hint-arrow {
+            display: inline-block;
+            animation: arrow-bounce 1.4s ease-in-out infinite;
+            margin-left: 4px;
+        }
+        @keyframes arrow-bounce {
+            0%, 100% { transform: translateY(0); }
+            50%      { transform: translateY(5px); }
+        }
+
+        /* ===================== IDLE BREATHING ===================== */
+        .doors:not(.opened):not(.pulling) .door--left .door__inner {
+            animation: breathe-l 5s ease-in-out infinite;
+        }
+        .doors:not(.opened):not(.pulling) .door--right .door__inner {
+            animation: breathe-r 5s ease-in-out infinite;
+        }
+        @keyframes breathe-l { 0%,100% { transform: rotateY(0); } 50% { transform: rotateY(-0.4deg); } }
+        @keyframes breathe-r { 0%,100% { transform: rotateY(0); } 50% { transform: rotateY(0.4deg); } }
+
+        /* ===================== PULLING STATE ===================== */
+        .doors.pulling .door--left .door__inner,
+        .doors.pulling .door--right .door__inner {
+            transition: transform 0.05s linear;
+            animation: none;
+        }
+
+        /* ===================== SPARKLE ===================== */
+        .sparkle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 100;
+            border-radius: 50%;
+            background: var(--gold);
+        }
+        @keyframes sparkle-burst {
+            0%   { opacity: 1; transform: scale(0) translate(0,0); }
+            100% { opacity: 0; transform: scale(1) translate(var(--tx), var(--ty)); }
+        }
+
+        /* ===================== RESPONSIVE ===================== */
+        @media (max-width: 600px) {
+            .wrapper { width: 96vw; }
+            .hint { bottom: max(-32px, -4vmin); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <!-- The invitation image (hidden behind doors) -->
+    <div class="invitation" id="invitation">
+        <img src="images/invitation-center.jpeg" alt="Pozivnica" id="invImg">
+    </div>
+
+    <!-- Two doors = the cover -->
+    <div class="doors" id="doors">
+        <!-- Left door -->
+        <div class="door door--left">
+            <div class="door__inner">
+                <div class="door__face door__front">
+                    <div class="corner corner--tl">
+                        <svg viewBox="0 0 80 80" fill="none">
+                            <path d="M8 8C8 8 38 10 42 42" stroke="var(--gold)" stroke-width="1.3" fill="none"/>
+                            <path d="M8 8C10 38 42 42 42 42" stroke="var(--gold)" stroke-width="1.3" fill="none"/>
+                            <circle cx="25" cy="25" r="2.5" fill="var(--gold)" opacity="0.45"/>
+                            <path d="M14 28Q23 23 28 14" stroke="var(--gold)" stroke-width="0.8" fill="none" opacity="0.35"/>
+                        </svg>
+                    </div>
+                    <div class="corner corner--bl">
+                        <svg viewBox="0 0 80 80" fill="none">
+                            <path d="M8 8C8 8 38 10 42 42" stroke="var(--gold)" stroke-width="1.3" fill="none"/>
+                            <path d="M8 8C10 38 42 42 42 42" stroke="var(--gold)" stroke-width="1.3" fill="none"/>
+                            <circle cx="25" cy="25" r="2.5" fill="var(--gold)" opacity="0.45"/>
+                        </svg>
+                    </div>
+                    <!-- Floral accent -->
+                    <div class="floral-accent floral-left">
+                        <svg viewBox="0 0 100 140" fill="none">
+                            <path d="M50 140 Q48 100 50 70 Q52 40 50 10" stroke="var(--gold)" stroke-width="1.5" fill="none"/>
+                            <path d="M50 100 Q30 85 20 70" stroke="var(--gold)" stroke-width="1" fill="none"/>
+                            <path d="M50 80 Q70 65 80 55" stroke="var(--gold)" stroke-width="1" fill="none"/>
+                            <path d="M50 55 Q35 45 25 35" stroke="var(--gold)" stroke-width="1" fill="none"/>
+                            <ellipse cx="20" cy="68" rx="8" ry="5" stroke="var(--gold)" stroke-width="0.8" fill="none" transform="rotate(-20 20 68)"/>
+                            <ellipse cx="80" cy="53" rx="8" ry="5" stroke="var(--gold)" stroke-width="0.8" fill="none" transform="rotate(15 80 53)"/>
+                            <ellipse cx="25" cy="33" rx="6" ry="4" stroke="var(--gold)" stroke-width="0.8" fill="none" transform="rotate(-30 25 33)"/>
+                            <circle cx="50" cy="10" r="10" stroke="var(--gold)" stroke-width="0.8" fill="none"/>
+                            <circle cx="50" cy="10" r="5" stroke="var(--gold)" stroke-width="0.6" fill="none"/>
+                        </svg>
+                    </div>
+                    <span class="cover-letter">M</span>
+                </div>
+                <div class="door__face door__back"></div>
+            </div>
+        </div>
+
+        <!-- Right door -->
+        <div class="door door--right">
+            <div class="door__inner">
+                <div class="door__face door__front">
+                    <div class="corner corner--tr">
+                        <svg viewBox="0 0 80 80" fill="none">
+                            <path d="M8 8C8 8 38 10 42 42" stroke="var(--gold)" stroke-width="1.3" fill="none"/>
+                            <path d="M8 8C10 38 42 42 42 42" stroke="var(--gold)" stroke-width="1.3" fill="none"/>
+                            <circle cx="25" cy="25" r="2.5" fill="var(--gold)" opacity="0.45"/>
+                        </svg>
+                    </div>
+                    <div class="corner corner--br">
+                        <svg viewBox="0 0 80 80" fill="none">
+                            <path d="M8 8C8 8 38 10 42 42" stroke="var(--gold)" stroke-width="1.3" fill="none"/>
+                            <path d="M8 8C10 38 42 42 42 42" stroke="var(--gold)" stroke-width="1.3" fill="none"/>
+                            <circle cx="25" cy="25" r="2.5" fill="var(--gold)" opacity="0.45"/>
+                        </svg>
+                    </div>
+                    <!-- Floral accent -->
+                    <div class="floral-accent floral-right">
+                        <svg viewBox="0 0 100 140" fill="none">
+                            <path d="M50 140 Q48 100 50 70 Q52 40 50 10" stroke="var(--gold)" stroke-width="1.5" fill="none"/>
+                            <path d="M50 100 Q30 85 20 70" stroke="var(--gold)" stroke-width="1" fill="none"/>
+                            <path d="M50 80 Q70 65 80 55" stroke="var(--gold)" stroke-width="1" fill="none"/>
+                            <path d="M50 55 Q35 45 25 35" stroke="var(--gold)" stroke-width="1" fill="none"/>
+                            <ellipse cx="20" cy="68" rx="8" ry="5" stroke="var(--gold)" stroke-width="0.8" fill="none" transform="rotate(-20 20 68)"/>
+                            <ellipse cx="80" cy="53" rx="8" ry="5" stroke="var(--gold)" stroke-width="0.8" fill="none" transform="rotate(15 80 53)"/>
+                            <circle cx="50" cy="10" r="10" stroke="var(--gold)" stroke-width="0.8" fill="none"/>
+                            <circle cx="50" cy="10" r="5" stroke="var(--gold)" stroke-width="0.6" fill="none"/>
+                        </svg>
+                    </div>
+                    <span class="cover-letter">T</span>
+                </div>
+                <div class="door__face door__back"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bow + pull handle -->
+    <div class="bow-wrapper" id="bowWrapper">
+        <div class="bow-cross">&#10013;</div>
+        <svg class="bow-svg" viewBox="0 0 200 110" fill="none">
+            <!-- Left ribbon loop -->
+            <path d="M100 55C92 20 30 10 35 55C30 95 92 88 100 55Z"
+                  fill="url(#gG)" stroke="var(--gold-dark)" stroke-width="0.8"/>
+            <!-- Right ribbon loop -->
+            <path d="M100 55C108 20 170 10 165 55C170 95 108 88 100 55Z"
+                  fill="url(#gG)" stroke="var(--gold-dark)" stroke-width="0.8"/>
+            <!-- Loop highlights -->
+            <path d="M62 32C56 42 56 62 62 72" stroke="rgba(255,255,255,0.15)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <path d="M138 32C144 42 144 62 138 72" stroke="rgba(255,255,255,0.15)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <!-- Center knot -->
+            <ellipse cx="100" cy="55" rx="15" ry="13" fill="var(--gold-dark)" stroke="#8f7225" stroke-width="0.5"/>
+            <ellipse cx="96" cy="50" rx="7" ry="5" fill="var(--gold-light)" opacity="0.25"/>
+            <!-- Tails -->
+            <path d="M90 66Q72 90 55 108" stroke="url(#tG)" stroke-width="8" stroke-linecap="round" fill="none"/>
+            <path d="M110 66Q128 90 145 108" stroke="url(#tG)" stroke-width="8" stroke-linecap="round" fill="none"/>
+            <!-- Tail notches -->
+            <path d="M49 108L55 96L61 108" stroke="url(#tG)" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+            <path d="M139 108L145 96L151 108" stroke="url(#tG)" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+            <defs>
+                <linearGradient id="gG" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#d4b55a"/>
+                    <stop offset="50%" stop-color="#c9a84c"/>
+                    <stop offset="100%" stop-color="#a88530"/>
+                </linearGradient>
+                <linearGradient id="tG" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#c9a84c"/>
+                    <stop offset="100%" stop-color="#a88530"/>
+                </linearGradient>
+            </defs>
+        </svg>
+
+        <!-- The string you pull -->
+        <div class="pull-handle" id="pullHandle">
+            <div class="pull-string" id="pullString"></div>
+            <div class="pull-tassel"></div>
+        </div>
+    </div>
+
+    <!-- Hint -->
+    <div class="hint" id="hint">
+        Povucite vrpcu za otvaranje <span class="hint-arrow">&#8595;</span>
+    </div>
+</div>
+
+<script>
+(() => {
+    const doors       = document.getElementById('doors');
+    const bowWrapper  = document.getElementById('bowWrapper');
+    const pullHandle  = document.getElementById('pullHandle');
+    const pullString  = document.getElementById('pullString');
+    const hint        = document.getElementById('hint');
+    const invitation  = document.getElementById('invitation');
+    const wrapper     = document.querySelector('.wrapper');
+    const leftInner   = doors.querySelector('.door--left .door__inner');
+    const rightInner  = doors.querySelector('.door--right .door__inner');
+
+    let isDragging = false;
+    let startY     = 0;
+    let isOpened   = false;
+    const THRESHOLD = 100;
+
+    function getY(e) {
+        return e.touches && e.touches.length ? e.touches[0].clientY : e.clientY;
+    }
+
+    /* --- START PULL --- */
+    function onStart(e) {
+        if (isOpened) return;
+        e.preventDefault();
+        isDragging = true;
+        startY = getY(e);
+        doors.classList.add('pulling');
+        bowWrapper.style.transition = 'none';
+        pullHandle.style.animation  = 'none';
+    }
+
+    /* --- MOVE --- */
+    function onMove(e) {
+        if (!isDragging || isOpened) return;
+        e.preventDefault();
+
+        const pull     = Math.max(0, getY(e) - startY);
+        const clamped  = Math.min(pull, THRESHOLD * 1.3);
+        const progress = Math.min(pull / THRESHOLD, 1);
+
+        // move handle down
+        pullHandle.style.transform = 'translateY(' + (clamped * 0.6) + 'px) rotate(0deg)';
+
+        // peek doors
+        const peek = progress * 12;
+        leftInner.style.transform  = 'rotateY(-' + peek + 'deg)';
+        rightInner.style.transform = 'rotateY(' + peek + 'deg)';
+
+        // bow follows slightly
+        bowWrapper.style.transform = 'translate(-50%, calc(-50% + ' + (clamped * 0.15) + 'px)) scale(' + (1 - progress * 0.1) + ')';
+        bowWrapper.style.opacity   = 1 - progress * 0.35;
+
+        if (pull >= THRESHOLD) openDoors();
+    }
+
+    /* --- END PULL (spring back) --- */
+    function onEnd() {
+        if (!isDragging || isOpened) return;
+        isDragging = false;
+        doors.classList.remove('pulling');
+
+        pullHandle.style.transform = '';
+        pullHandle.style.animation = '';
+
+        leftInner.style.transition  = 'transform 0.6s cubic-bezier(0.68,-0.55,0.27,1.55)';
+        rightInner.style.transition = 'transform 0.6s cubic-bezier(0.68,-0.55,0.27,1.55)';
+        leftInner.style.transform   = '';
+        rightInner.style.transform  = '';
+
+        bowWrapper.style.transition = 'all 0.6s cubic-bezier(0.68,-0.55,0.27,1.55)';
+        bowWrapper.style.transform  = '';
+        bowWrapper.style.opacity    = '';
+
+        setTimeout(function() {
+            if (!isOpened) {
+                leftInner.style.transition  = '';
+                rightInner.style.transition = '';
+            }
+        }, 700);
+    }
+
+    /* --- OPEN --- */
+    function openDoors() {
+        if (isOpened) return;
+        isOpened = true;
+        isDragging = false;
+
+        leftInner.style.transition  = '';
+        rightInner.style.transition = '';
+        leftInner.style.transform   = '';
+        rightInner.style.transform  = '';
+
+        doors.classList.remove('pulling');
+        doors.classList.add('opened');
+
+        // Animate bow to fully hidden from current state (works even during slow pulls)
+        bowWrapper.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        bowWrapper.style.opacity = '0';
+        bowWrapper.style.transform = 'translate(-50%, 60%) scale(0.4) rotate(12deg)';
+        bowWrapper.style.pointerEvents = 'none';
+        hint.classList.add('hidden');
+        invitation.classList.add('revealed');
+
+        createSparkles();
+    }
+
+    /* --- SPARKLES --- */
+    function createSparkles() {
+        var rect = wrapper.getBoundingClientRect();
+        var cx = rect.left + rect.width / 2;
+        var cy = rect.top + rect.height / 2;
+
+        for (var i = 0; i < 28; i++) {
+            (function(i) {
+                setTimeout(function() {
+                    var el = document.createElement('div');
+                    el.className = 'sparkle';
+                    var size  = 3 + Math.random() * 6;
+                    var angle = (Math.PI * 2 * i) / 28 + (Math.random() - 0.5) * 0.4;
+                    var dist  = 60 + Math.random() * 140;
+                    var tx = Math.cos(angle) * dist;
+                    var ty = Math.sin(angle) * dist;
+
+                    el.style.cssText =
+                        'left:' + cx + 'px;top:' + cy + 'px;' +
+                        'width:' + size + 'px;height:' + size + 'px;' +
+                        '--tx:' + tx + 'px;--ty:' + ty + 'px;' +
+                        'animation:sparkle-burst ' + (0.6 + Math.random() * 0.6) + 's ease-out forwards;';
+
+                    document.body.appendChild(el);
+                    setTimeout(function() { el.remove(); }, 1500);
+                }, i * 40);
+            })(i);
+        }
+    }
+
+    /* --- EVENT LISTENERS --- */
+    pullHandle.addEventListener('mousedown', onStart);
+    pullHandle.addEventListener('touchstart', onStart, { passive: false });
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('touchmove', onMove, { passive: false });
+    document.addEventListener('mouseup', onEnd);
+    document.addEventListener('touchend', onEnd);
+
+    // clicking the bow itself also opens (fallback)
+    bowWrapper.addEventListener('click', function(e) {
+        if (isOpened || e.target.closest('.pull-handle')) return;
+        openDoors();
+    });
+
+    // auto-adjust aspect ratio to match the actual image
+    var img = document.getElementById('invImg');
+    img.addEventListener('load', function() {
+        if (img.naturalWidth && img.naturalHeight) {
+            var ratio = img.naturalWidth / img.naturalHeight;
+            wrapper.style.aspectRatio = '' + ratio;
+            wrapper.style.width = 'min(90vw, calc(90vh * ' + ratio + '))';
+        }
+    });
+})();
+</script>
+
+</body>
+</html>

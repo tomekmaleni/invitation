@@ -37,8 +37,8 @@
         /* ===================== WRAPPER ===================== */
         .wrapper {
             position: relative;
-            width: min(88vw, calc(88vh * 1.42));
-            aspect-ratio: 1.42;
+            width: min(88vw, calc(88vh * 0.709));
+            aspect-ratio: 0.709;
             max-width: 1050px;
         }
 
@@ -616,13 +616,15 @@
 
     // auto-adjust aspect ratio to match the actual image
     var img = document.getElementById('invImg');
-    img.addEventListener('load', function() {
+    function adjustRatio() {
         if (img.naturalWidth && img.naturalHeight) {
             var ratio = img.naturalWidth / img.naturalHeight;
             wrapper.style.aspectRatio = '' + ratio;
             wrapper.style.width = 'min(50vw, calc(90vh * ' + ratio + '))';
         }
-    });
+    }
+    img.addEventListener('load', adjustRatio);
+    if (img.complete) adjustRatio();
 })();
 </script>
 

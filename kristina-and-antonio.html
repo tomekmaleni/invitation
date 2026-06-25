@@ -38,7 +38,10 @@
             align-items: center;
             min-height: 100vh;
             min-height: 100dvh;
-            background: #33251a url(images/wooden-desk-background.webp) center / cover no-repeat;
+            /* warm-white overlay on top of the wood photo to lighten it a little */
+            background:
+                linear-gradient(rgba(255, 248, 238, 0.14), rgba(255, 248, 238, 0.14)),
+                #33251a url(images/wooden-desk-background.webp) center / cover no-repeat;
             overflow: hidden;
             font-family: 'Cormorant Garamond', serif;
             -webkit-tap-highlight-color: transparent;

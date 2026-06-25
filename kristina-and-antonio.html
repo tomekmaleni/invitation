@@ -219,13 +219,26 @@
         return parseFloat(getComputedStyle(root).getPropertyValue('--card-left')) || 52;
     }
     function setLeft(v) {
-        if (v > ABOVE_AT) unlocked = true;          // latch: once pulled out it rides above
-        const lo = unlocked ? MIN_UNLOCKED : MIN;    // and may then slide further left
+        const lo = unlocked ? MIN_UNLOCKED : MIN;    // logical slide range
         v = Math.max(lo, Math.min(MAX, v));
+        v = clampOnScreen(v);                        // never let the card slide off the screen
+        if (v > ABOVE_AT) unlocked = true;           // latch: once pulled out it rides above
         root.style.setProperty('--card-left', v.toFixed(1) + '%');
         card.classList.toggle('above', unlocked);
         if (readout) readout.textContent = '--card-left: ' + v.toFixed(1) + '%';
         return v;
+    }
+
+    // clamp --card-left (%) so the card always stays fully inside the viewport
+    function clampOnScreen(v) {
+        const sr = scene.getBoundingClientRect();
+        const sw = sr.width || 1;
+        const cw = card.getBoundingClientRect().width;
+        const m = 6;                                 // small screen-edge margin (px)
+        const lo = (m - sr.left) / sw * 100;
+        const hi = (window.innerWidth - m - cw - sr.left) / sw * 100;
+        if (lo > hi) return (lo + hi) / 2;           // card wider than screen -> centre it
+        return Math.max(lo, Math.min(hi, v));
     }
 
     function openEnvelope() {

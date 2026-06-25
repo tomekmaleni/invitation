@@ -20,7 +20,7 @@
     <style>
         :root {
             --ratio:     0.7001;   /* invitation card aspect (w/h) */
-            --env-ratio: 0.709;    /* closed envelope aspect */
+            --env-ratio: 1.4682;   /* closed envelope aspect (landscape sealed-flap photo) */
             --scene-ar:  1.329;    /* open-envelope aspect (bg & fg share this canvas) */
             /* card placement inside the open-envelope scene.
                --card-left is drag-controlled (the invitation slides left/right) */
@@ -109,7 +109,9 @@
         .env-closed {
             position: absolute;
             left: 50%; top: 50%;
-            height: calc(min(86vw, 60vh) / 0.70);
+            /* landscape photo: clamp by BOTH width and height so the whole
+               envelope is always fully visible, on any screen size */
+            width: min(90vw, 84vh * var(--env-ratio));
             aspect-ratio: var(--env-ratio);
             transform: translate(-50%, -50%);
             z-index: 10;

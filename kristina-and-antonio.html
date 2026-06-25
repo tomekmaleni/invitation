@@ -38,7 +38,7 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        .stage { position: relative; width: 100%; height: 100dvh; touch-action: none; }
+        .stage { position: relative; width: 100%; height: 100dvh; touch-action: pinch-zoom; }
 
         /* ===================== OPEN ENVELOPE SCENE (bg + card + fg) ===================== */
         .scene {
@@ -48,6 +48,12 @@
             transform: translate(-50%, -50%);
             width: min(80vw, 120vh);
             aspect-ratio: var(--scene-ar);
+        }
+
+        /* Portrait / narrow screens (phones, portrait tablets): show the WHOLE opened
+           envelope + invitation (zoomed out). The user can pinch-zoom in to read details. */
+        @media (max-aspect-ratio: 1 / 1) {
+            .scene { width: min(94vw, 120vh); }
         }
 
         .env-bg, .env-fg {
@@ -71,7 +77,7 @@
             position: absolute;
             left: var(--card-left); top: var(--card-top);
             height: 87%;
-            width: fit-content;
+            aspect-ratio: var(--ratio);        /* width derives from height (robust on mobile) */
             z-index: 2;                        /* between bg and fg -> sits inside the envelope */
             border-radius: 3px;
             overflow: hidden;
@@ -79,12 +85,12 @@
             box-shadow: 0 10px 26px rgba(80, 62, 30, 0.22);
             opacity: 0;
             cursor: grab;
-            touch-action: none;
+            touch-action: pinch-zoom;          /* drag to slide, pinch to zoom in */
             will-change: left;
             transition: opacity 0.4s ease;
         }
         .card:active { cursor: grabbing; }
-        .card img { width: fit-content; height: 100%; object-fit: contain; display: block; pointer-events: none; }
+        .card img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
 
         .stage.opened .env-bg,
         .stage.opened .env-fg { opacity: 1; }
@@ -105,7 +111,7 @@
             background: url(images/envelope-closed.webp) center / cover no-repeat;
             box-shadow: 0 16px 38px rgba(80, 62, 30, 0.30);
             cursor: grab;
-            touch-action: none;
+            touch-action: pinch-zoom;
             -webkit-user-select: none; user-select: none;
             -webkit-touch-callout: none;
             transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.34,1.56,0.64,1);

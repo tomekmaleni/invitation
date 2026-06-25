@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://tomekmaleni.github.io/invitation/kristina-and-antonio.html" />
+    <meta property="og:title" content="Kristina & Antonio - Pozivnica" />
+    <meta property="og:description" content="Pozivnica za vjenčanje Kristine i Antonija" />
+    <meta property="og:image" content="https://tomekmaleni.github.io/invitation/images/kristina-antonio-invitation.jpg" />
+    <title>Kristina & Antonio - Pozivnica</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ratio:     0.7001;   /* invitation card aspect (w/h) */
+            --env-ratio: 0.709;    /* closed envelope aspect */
+            --scene-ar:  1.329;    /* open-envelope aspect (bg & fg share this canvas) */
+            /* card placement inside the open-envelope scene.
+               --card-left is drag-controlled (the invitation slides left/right) */
+            --card-left:  37%;
+            --card-top:   9%;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body { width: 100%; height: 100%; }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            min-height: 100dvh;
+            background: #33251a url(images/wooden-desk-background.webp) center / cover no-repeat;
+            overflow: hidden;
+            font-family: 'Cormorant Garamond', serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .stage { position: relative; width: 100%; height: 100dvh; touch-action: none; }
+
+        /* ===================== OPEN ENVELOPE SCENE (bg + card + fg) ===================== */
+        .scene {
+            position: absolute;
+            left: 50%; top: 50%;
+            /* envelope stays fixed/centred; the card slides within it */
+            transform: translate(-50%, -50%);
+            width: min(80vw, 120vh);
+            aspect-ratio: var(--scene-ar);
+        }
+
+        .env-bg, .env-fg {
+            position: absolute;
+            background-repeat: no-repeat;
+            opacity: 0;
+            transition: opacity 0.35s ease;   /* envelope swaps in at the start of opening */
+        }
+        .env-bg {                              /* full open-envelope back - BEHIND the card */
+            inset: 0;
+            z-index: 1;
+            background: url(images/envelope-bg.webp) center / 100% 100% no-repeat;
+        }
+        .env-fg {                              /* front pocket - IN FRONT of the card */
+            inset: 0;                          /* shares the same canvas as the bg -> aligned 1:1 */
+            z-index: 3;
+            background: url(images/envelope-fg.webp) center / 100% 100% no-repeat;
+        }
+
+        .card {
+            position: absolute;
+            left: var(--card-left); top: var(--card-top);
+            height: 87%;
+            width: fit-content;
+            z-index: 2;                        /* between bg and fg -> sits inside the envelope */
+            border-radius: 3px;
+            overflow: hidden;
+            background: #faf7f0;
+            box-shadow: 0 10px 26px rgba(80, 62, 30, 0.22);
+            opacity: 0;
+            cursor: grab;
+            touch-action: none;
+            will-change: left;
+            transition: opacity 0.4s ease;
+        }
+        .card:active { cursor: grabbing; }
+        .card img { width: fit-content; height: 100%; object-fit: contain; display: block; pointer-events: none; }
+
+        .stage.opened .env-bg,
+        .stage.opened .env-fg { opacity: 1; }
+        .stage.opened .card    { opacity: 1; }
+
+        /* once slid past the threshold, the invitation rides above the whole envelope */
+        .card.above { z-index: 5; }
+
+        /* ===================== CLOSED ENVELOPE (centred, the thing you open) ===================== */
+        .env-closed {
+            position: absolute;
+            left: 50%; top: 50%;
+            height: calc(min(86vw, 60vh) / 0.70);
+            aspect-ratio: var(--env-ratio);
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            border-radius: 5px;
+            background: url(images/envelope-closed.webp) center / cover no-repeat;
+            box-shadow: 0 16px 38px rgba(80, 62, 30, 0.30);
+            cursor: grab;
+            touch-action: none;
+            -webkit-user-select: none; user-select: none;
+            -webkit-touch-callout: none;
+            transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .env-closed:active { cursor: grabbing; }
+        .stage.opened .env-closed { opacity: 0; pointer-events: none; }
+
+        /* ===================== HINT ===================== */
+        .hint {
+            position: absolute;
+            left: 50%; bottom: 5vh;
+            transform: translateX(-50%);
+            font-style: italic;
+            font-size: clamp(12px, 1.9vmin, 18px);
+            letter-spacing: 0.02em;
+            color: #9c7e34;
+            white-space: nowrap;
+            text-align: center;
+            opacity: 0;
+            animation: hint-in 0.9s ease 1.1s forwards;
+            z-index: 30;
+            pointer-events: none;
+        }
+        .hint.hidden { animation: none; opacity: 0; transition: opacity 0.4s; }
+        @keyframes hint-in { to { opacity: 0.92; } }
+
+        .hint-arrow {
+            display: inline-block;
+            margin-left: 5px;
+            animation: arrow-nudge 1.5s ease-in-out infinite;
+        }
+        @keyframes arrow-nudge {
+            0%, 100% { transform: translateX(0); }
+            50%      { transform: translateX(6px); }
+        }
+
+        /* ===================== SPARKLES ===================== */
+        .sparkle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 100;
+            border-radius: 50%;
+            background: #c2a24c;
+        }
+        @keyframes sparkle-burst {
+            0%   { opacity: 1; transform: scale(0) translate(0,0); }
+            100% { opacity: 0; transform: scale(1) translate(var(--tx), var(--ty)); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .env-closed, .hint-arrow { animation: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="stage" id="stage">
+
+    <!-- Open-envelope scene: background behind the invitation, foreground in front -->
+    <div class="scene" id="scene">
+        <div class="env-bg"></div>
+        <div class="card" id="card">
+            <img src="images/kristina-antonio-invitation.webp" alt="Pozivnica Kristina i Antonio" id="invImg">
+        </div>
+        <div class="env-fg"></div>
+    </div>
+
+    <!-- Closed envelope: centred, the element you pull to open -->
+    <div class="env-closed" id="envClosed"></div>
+
+    <!-- Hint -->
+    <div class="hint" id="hint">
+        Povucite za otvaranje <span class="hint-arrow">&#8594;</span>
+    </div>
+</div>
+
+<!-- TEMP: position readout for feedback (remove later) -->
+<div id="readout" style="display:none;position:fixed;left:50%;bottom:12px;transform:translateX(-50%);z-index:9999;
+     font:13px monospace;color:#6b5d3e;background:rgba(255,255,255,.9);padding:5px 12px;border-radius:6px;
+     box-shadow:0 2px 8px rgba(0,0,0,.15);pointer-events:none;">--card-left: 31.7%</div>
+
+<script>
+(() => {
+    const stage     = document.getElementById('stage');
+    const scene     = document.getElementById('scene');
+    const envClosed = document.getElementById('envClosed');
+    const card      = document.getElementById('card');
+    const hint      = document.getElementById('hint');
+    const readout   = document.getElementById('readout');
+    const root      = document.documentElement;
+
+    // how far the invitation can slide (% of the scene width)
+    const MIN = 24, MIN_UNLOCKED = -20, MAX = 76;
+    // past this point the invitation rides above the whole envelope (latched),
+    // and from then on it can slide further left than the normal limit
+    const ABOVE_AT = 52;
+
+    let dragging = false;
+    let opened   = false;
+    let unlocked = false;
+    let startX = 0, startLeft = 0, moved = 0;
+    const TAP_SLOP = 9;
+
+    function getLeft() {
+        return parseFloat(getComputedStyle(root).getPropertyValue('--card-left')) || 52;
+    }
+    function setLeft(v) {
+        if (v > ABOVE_AT) unlocked = true;          // latch: once pulled out it rides above
+        const lo = unlocked ? MIN_UNLOCKED : MIN;    // and may then slide further left
+        v = Math.max(lo, Math.min(MAX, v));
+        root.style.setProperty('--card-left', v.toFixed(1) + '%');
+        card.classList.toggle('above', unlocked);
+        if (readout) readout.textContent = '--card-left: ' + v.toFixed(1) + '%';
+        return v;
+    }
+
+    function openEnvelope() {
+        if (opened) return;
+        opened = true;
+        stage.classList.add('opened');
+        hint.classList.add('hidden');
+    }
+
+    /* --- begin drag (on the closed envelope before opening, or the card after) --- */
+    function onDown(e) {
+        dragging = true;
+        moved = 0;
+        startX = e.clientX;
+        if (!opened) openEnvelope();
+        startLeft = getLeft();
+        const t = e.currentTarget;
+        try { t.setPointerCapture(e.pointerId); } catch (_) {}
+        e.preventDefault();
+    }
+
+    /* --- slide the invitation with the pointer --- */
+    function onMove(e) {
+        if (!dragging) return;
+        moved = Math.max(moved, Math.abs(e.clientX - startX));
+        const w = scene.clientWidth || 1;
+        setLeft(startLeft + (e.clientX - startX) / w * 100);
+    }
+
+    function onUp() { dragging = false; }
+
+    // slide from anywhere on the stage, in any position
+    stage.addEventListener('pointerdown', onDown);
+    stage.addEventListener('pointermove', onMove);
+    stage.addEventListener('pointerup', onUp);
+    stage.addEventListener('pointercancel', onUp);
+
+    setLeft(getLeft());  // initialise the readout
+
+    const img = document.getElementById('invImg');
+    function adjustRatio() {
+        if (img.naturalWidth && img.naturalHeight)
+            root.style.setProperty('--ratio', img.naturalWidth / img.naturalHeight);
+    }
+    img.addEventListener('load', adjustRatio);
+    if (img.complete) adjustRatio();
+})();
+</script>
+
+</body>
+</html>

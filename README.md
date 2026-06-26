@@ -13,10 +13,11 @@ Interactive single-page wedding invitations, served via GitHub Pages:
   envelope built from two transparent layers — a background (envelope back + wax seal) and a
   foreground (front pocket) — with the card in between. Drag anywhere to slide the card out; once
   it passes a threshold it lifts above the whole envelope.
-  - The backdrop comes in three interchangeable versions, each its own file with its own
+  - The backdrop comes in four interchangeable versions, each its own file with its own
     link-preview thumbnail: **`kristina-and-antonio.html`** (warm olive-wood grain),
-    **`kristina-and-antonio-olive-branch.html`** (cream plaster framed by an olive branch), and
-    **`kristina-and-antonio-dark-desk.html`** (dark wooden planks).
+    **`kristina-and-antonio-olive-branch.html`** (cream plaster framed by an olive branch),
+    **`kristina-and-antonio-dark-desk.html`** (dark wooden planks), and
+    **`kristina-and-antonio-babys-breath.html`** (dark wooden planks framed with baby's breath).
 
 ## Structure
 
